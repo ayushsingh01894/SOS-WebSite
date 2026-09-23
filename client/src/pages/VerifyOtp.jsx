@@ -10,7 +10,7 @@ export default function VerifyOtp() {
   const [email, setEmail] = useState(location.state?.email || '');
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
-  const [info, setInfo] = useState(location.state?.email ? 'We sent a 6-digit code to your registered phone number.' : '');
+  const [info, setInfo] = useState(location.state?.email ? 'We sent a 6-digit code to your email.' : '');
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
 
@@ -51,7 +51,7 @@ export default function VerifyOtp() {
     <div className="auth-page">
       <form className="auth-form" onSubmit={handleSubmit}>
         <h1>🚨 Silent SOS</h1>
-        <h2>Verify your phone number</h2>
+        <h2>Verify your account</h2>
         {error && <p className="form-error">{error}</p>}
         {info && <p className="form-success">{info}</p>}
 

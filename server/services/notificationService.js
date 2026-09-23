@@ -129,8 +129,6 @@ async function sendSMS(contact, text) {
   }
 
   try {
-    // Twilio expects E.164 format (e.g. +919876543210). If the stored number
-    // doesn't include a country code, this assumes India (+91) — adjust as needed.
     const to = contact.phone.startsWith('+') ? contact.phone : `+91${contact.phone}`;
     await twilioClient.messages.create({
       body: text,
@@ -181,10 +179,44 @@ async function sendOtpSms(phone, otp) {
     return { status: 'SENT', recipient: to };
   } catch (err) {
     console.error(`Failed to send OTP SMS to ${phone}:`, err.message);
-    // Still log it so the account isn't unrecoverable if SMS delivery fails.
     console.log('[FALLBACK OTP LOG]', JSON.stringify({ to: phone, otp }, null, 2));
     return { status: 'FAILED', recipient: phone, error: err.message };
   }
 }
 
-module.exports = { notifyEmergencyContacts, sendOtpSms };
+async function sendOtpEmail(email, otp) {
+  const html = `
+  <div style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:420px;margin:0 auto;background:#f5f3ee;padding:24px;">
+    <div style="background:#101a26;color:#fff;padding:18px 20px;border-radius:8px 8px 0 0;">
+      <span style="font-size:18px;font-weight:700;">🚨 Silent SOS</span>
+    </div>
+    <div style="background:#ffffff;padding:24px;border-radius:0 0 8px 8px;border:1px solid #e2ded4;border-top:none;text-align:center;">
+      <p style="font-size:14px;color:#4c5a6e;margin-top:0;">Your verification code is</p>
+      <div style="font-size:32px;font-weight:700;letter-spacing:6px;color:#101a26;margin:12px 0;">${otp}</div>
+      <p style="font-size:13px;color:#4c5a6e;">This code expires in 10 minutes. Do not share it with anyone.</p>
+    </div>
+  </div>`;
+  const text = `Your Silent SOS verification code is ${otp}. It expires in 10 minutes. Do not share this code with anyone.`;
+
+  if (!mailer) {
+    console.log('[MOCK OTP EMAIL]', JSON.stringify({ to: email, otp }, null, 2));
+    return { status: 'MOCK_SENT', recipient: email };
+  }
+
+  try {
+    await mailer.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: '🚨 Your Silent SOS verification code',
+      text,
+      html
+    });
+    return { status: 'SENT', recipient: email };
+  } catch (err) {
+    console.error(`Failed to send OTP email to ${email}:`, err.message);
+    console.log('[FALLBACK OTP LOG]', JSON.stringify({ to: email, otp }, null, 2));
+    return { status: 'FAILED', recipient: email, error: err.message };
+  }
+}
+
+module.exports = { notifyEmergencyContacts, sendOtpSms, sendOtpEmail };

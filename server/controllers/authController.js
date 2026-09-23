@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const { sendOtpSms } = require('../services/notificationService');
+const { sendOtpSms, sendOtpEmail } = require('../services/notificationService');
 
 const OTP_EXPIRY_MINUTES = 10;
 
@@ -39,11 +39,11 @@ async function register(req, res, next) {
     const otp = generateOtp();
     const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000).toISOString();
     await User.setOtp(user.id, otp, expiresAt);
-    await sendOtpSms(phone, otp);
+    await Promise.all([sendOtpSms(phone, otp), sendOtpEmail(email, otp)]);
 
     res.status(201).json({
       success: true,
-      message: 'Account created. Enter the verification code sent to your phone.',
+      message: 'Account created. Enter the verification code sent to your email.',
       email: user.email
     });
   } catch (err) {
@@ -106,9 +106,9 @@ async function resendOtp(req, res, next) {
     const otp = generateOtp();
     const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000).toISOString();
     await User.setOtp(user.id, otp, expiresAt);
-    await sendOtpSms(user.phone, otp);
+    await Promise.all([sendOtpSms(user.phone, otp), sendOtpEmail(user.email, otp)]);
 
-    res.json({ success: true, message: 'A new verification code has been sent.' });
+    res.json({ success: true, message: 'A new verification code has been sent to your email.' });
   } catch (err) {
     next(err);
   }
@@ -137,13 +137,13 @@ async function login(req, res, next) {
       const otp = generateOtp();
       const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000).toISOString();
       await User.setOtp(user.id, otp, expiresAt);
-      await sendOtpSms(user.phone, otp);
+      await Promise.all([sendOtpSms(user.phone, otp), sendOtpEmail(user.email, otp)]);
 
       return res.status(403).json({
         success: false,
         needsVerification: true,
         email: user.email,
-        message: 'Your phone number is not verified yet. A new code has been sent.'
+        message: 'Your account is not verified yet. A new code has been sent to your email.'
       });
     }
 

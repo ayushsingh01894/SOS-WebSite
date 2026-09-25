@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -15,16 +16,33 @@ app.use(
     credentials: true
   })
 );
+
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.json({ success: true, message: 'Silent SOS API is running.' });
-});
+// =========================
+// API ROUTES
+// =========================
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/sos', sosRoutes);
 app.use('/api/contacts', contactRoutes);
+
+// =========================
+// REACT FRONTEND
+// =========================
+
+const frontendPath = path.join(__dirname, '../client/dist');
+
+app.use(express.static(frontendPath));
+
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
+// =========================
+// ERROR HANDLING
+// =========================
 
 app.use(notFound);
 app.use(errorHandler);

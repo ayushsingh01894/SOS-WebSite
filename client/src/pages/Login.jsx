@@ -18,10 +18,6 @@ export default function Login() {
       await login(email, password);
       navigate('/dashboard');
     } catch (err) {
-      if (err.response?.data?.needsVerification) {
-        navigate('/verify-otp', { state: { email: err.response.data.email } });
-        return;
-      }
       setError(err.response?.data?.message || 'Unable to connect to the server.');
     } finally {
       setLoading(false);
@@ -31,8 +27,12 @@ export default function Login() {
   return (
     <div className="auth-page">
       <form className="auth-form" onSubmit={handleSubmit}>
-        <h1>🚨 Silent SOS</h1>
-        <h2>Login</h2>
+        <div className="auth-brand">
+          <span className="auth-brand-icon">🚨</span>
+          <span className="auth-brand-name">Silent SOS</span>
+        </div>
+        <h2>Welcome back</h2>
+        <p className="auth-subtitle">Sign in to continue to your safety dashboard.</p>
         {error && <p className="form-error">{error}</p>}
         <label>
           Email
@@ -48,10 +48,10 @@ export default function Login() {
           />
         </label>
         <button type="submit" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
+          {loading ? 'Signing in...' : 'Sign In'}
         </button>
         <p className="auth-switch">
-          Don't have an account? <Link to="/register">Register</Link>
+          Don't have an account? <Link to="/register">Create one</Link>
         </p>
       </form>
     </div>

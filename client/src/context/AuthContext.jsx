@@ -28,22 +28,10 @@ export function AuthProvider({ children }) {
     return data.user;
   }
 
-  // Registration no longer logs the user in directly — it creates the
-  // account and sends an OTP. The caller should route to /verify-otp.
   async function register(name, email, password, phone) {
     const { data } = await api.post('/auth/register', { name, email, password, phone });
-    return data; // { success, message, email }
-  }
-
-  async function verifyOtp(email, otp) {
-    const { data } = await api.post('/auth/verify-otp', { email, otp });
     setSession(data);
     return data.user;
-  }
-
-  async function resendOtp(email) {
-    const { data } = await api.post('/auth/resend-otp', { email });
-    return data;
   }
 
   function logout() {
@@ -53,7 +41,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, verifyOtp, resendOtp, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

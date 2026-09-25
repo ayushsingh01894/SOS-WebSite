@@ -21,7 +21,10 @@ if (emailConfigured) {
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_APP_PASSWORD
-    }
+    },
+    connectionTimeout: 10000, // fail fast instead of hanging if SMTP is blocked
+    greetingTimeout: 10000,
+    socketTimeout: 10000
   });
 }
 
@@ -129,6 +132,8 @@ async function sendSMS(contact, text) {
   }
 
   try {
+    // Twilio expects E.164 format (e.g. +919876543210). If the stored number
+    // doesn't include a country code, this assumes India (+91) — adjust as needed.
     const to = contact.phone.startsWith('+') ? contact.phone : `+91${contact.phone}`;
     await twilioClient.messages.create({
       body: text,
@@ -179,6 +184,7 @@ async function sendOtpSms(phone, otp) {
     return { status: 'SENT', recipient: to };
   } catch (err) {
     console.error(`Failed to send OTP SMS to ${phone}:`, err.message);
+    // Still log it so the account isn't unrecoverable if SMS delivery fails.
     console.log('[FALLBACK OTP LOG]', JSON.stringify({ to: phone, otp }, null, 2));
     return { status: 'FAILED', recipient: phone, error: err.message };
   }

@@ -18,7 +18,10 @@ async function createSOS(req, res, next) {
       User.findById(req.user.id),
       EmergencyContact.findAllByUser(req.user.id)
     ]);
-    const notifications = await notifyEmergencyContacts(contacts, {
+
+    // Fire-and-forget: the SOS alert is already saved. Don't make the user wait
+    // on a slow or blocked email/SMS provider before confirming the alert is active.
+    notifyEmergencyContacts(contacts, {
       userName: user.name,
       userPhone: user.phone,
       latitude,
@@ -26,9 +29,9 @@ async function createSOS(req, res, next) {
       accuracy,
       message,
       triggeredAt: new Date(alert.triggered_at || Date.now())
-    });
+    }).catch((err) => console.error('Notification delivery error (SOS):', err.message));
 
-    res.status(201).json({ success: true, alert, notified: notifications.length });
+    res.status(201).json({ success: true, alert, notified: contacts.length });
   } catch (err) {
     next(err);
   }

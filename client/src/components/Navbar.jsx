@@ -14,13 +14,14 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-      <Link to="/dashboard" className="navbar-brand">🚨 Silent SOS</Link>
+      <Link to="/dashboard" className="navbar-brand">
+        <span className="navbar-brand-icon">🚨</span> Silent SOS
+      </Link>
       <div className="navbar-links">
         <Link to="/dashboard">Dashboard</Link>
         <Link to="/emergency-contacts">Contacts</Link>
         <Link to="/sos-history">History</Link>
         <Link to="/profile">Profile</Link>
-        {user.role === 'admin' && <Link to="/admin">Admin</Link>}
         <button onClick={handleLogout} className="navbar-logout">Logout</button>
       </div>
     </nav>

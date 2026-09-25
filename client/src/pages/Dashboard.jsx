@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import SOSButton from '../components/SOSButton';
 import LocationCard from '../components/LocationCard';
 import SOSHistory from '../components/SOSHistory';
+import WelcomeModal from '../components/WelcomeModal';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -14,6 +15,12 @@ export default function Dashboard() {
   const [location, setLocation] = useState(null);
   const [locationError, setLocationError] = useState('');
   const [loadError, setLoadError] = useState('');
+  const [showWelcome, setShowWelcome] = useState(() => !sessionStorage.getItem('sos_welcome_shown'));
+
+  function dismissWelcome() {
+    sessionStorage.setItem('sos_welcome_shown', '1');
+    setShowWelcome(false);
+  }
 
   const detectLocation = useCallback(() => {
     if (!navigator.geolocation) {
@@ -58,7 +65,10 @@ export default function Dashboard() {
 
   return (
     <div className="page dashboard-page">
-      <h1>Welcome, {user?.name}</h1>
+      {showWelcome && <WelcomeModal onClose={dismissWelcome} name={user?.name} />}
+
+      <h1>Welcome back, {user?.name?.split(' ')[0]}</h1>
+      <p className="dashboard-subtitle">Here's your safety overview for today.</p>
 
       {loadError && <p className="form-error">{loadError}</p>}
 
@@ -71,10 +81,10 @@ export default function Dashboard() {
 
       <LocationCard location={location} locationError={locationError} onRetry={detectLocation} />
 
-      <section className="dashboard-section">
+      <section className="dashboard-section glass-card">
         <div className="dashboard-section-header">
           <h3>Emergency Contacts</h3>
-          <Link to="/emergency-contacts">Manage</Link>
+          <Link to="/emergency-contacts">Manage →</Link>
         </div>
         {contacts.length === 0 ? (
           <p className="empty-state">No emergency contacts added yet.</p>
@@ -87,10 +97,10 @@ export default function Dashboard() {
         )}
       </section>
 
-      <section className="dashboard-section">
+      <section className="dashboard-section glass-card">
         <div className="dashboard-section-header">
           <h3>Recent SOS Alerts</h3>
-          <Link to="/sos-history">View all</Link>
+          <Link to="/sos-history">View all →</Link>
         </div>
         <SOSHistory history={history} />
       </section>

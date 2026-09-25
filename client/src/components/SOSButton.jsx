@@ -30,6 +30,8 @@ export default function SOSButton({ activeAlert, onAlertChange, location, locati
     setLoading(true);
     setError('');
     try {
+      // If we don't already have a location fix, try once more right now —
+      // the dashboard's earlier attempt may have run before permission was granted.
       const finalLocation = location || (await getFreshLocation());
 
       const { data } = await api.post('/sos', {

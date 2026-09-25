@@ -5,12 +5,10 @@ import Navbar from './components/Navbar';
 
 import Login from './pages/Login';
 import Register from './pages/Register';
-import VerifyOtp from './pages/VerifyOtp';
 import Dashboard from './pages/Dashboard';
 import EmergencyContacts from './pages/EmergencyContacts';
 import SOSHistoryPage from './pages/SOSHistory';
 import Profile from './pages/Profile';
-import Admin from './pages/Admin';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -25,10 +23,6 @@ function AppRoutes() {
         <Route
           path="/register"
           element={user ? <Navigate to="/dashboard" replace /> : <Register />}
-        />
-        <Route
-          path="/verify-otp"
-          element={user ? <Navigate to="/dashboard" replace /> : <VerifyOtp />}
         />
 
         <Route
@@ -60,14 +54,6 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute adminOnly>
-              <Admin />
             </ProtectedRoute>
           }
         />

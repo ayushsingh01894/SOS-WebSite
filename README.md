@@ -1,3 +1,4 @@
+**Hey I am ayush singh**
 # 🚨 Silent SOS
 
 A full-stack emergency assistance web app: a discreet way to trigger an SOS, share your location, and notify emergency contacts.
@@ -11,39 +12,6 @@ silent-sos/
 ├── client/   React + Vite frontend
 └── server/   Node.js + Express + SQLite backend
 ```
-
-## Quick start
-
-### 1. Backend
-
-```bash
-cd server
-npm install        # already done if you're using this generated project as-is
-cp .env.example .env   # then edit JWT_SECRET before any real deployment
-npm run dev
-```
-
-Runs on `http://localhost:5000`. SQLite tables (`users`, `emergency_contacts`, `sos_alerts`) are created automatically on first run.
-
-### 2. Frontend
-
-In a second terminal:
-
-```bash
-cd client
-npm install
-npm run dev
-```
-
-Runs on `http://localhost:5173`.
-
-### 3. Try it
-
-1. Open `http://localhost:5173`, register an account.
-2. Allow location access when prompted.
-3. Add an emergency contact under **Contacts**.
-4. Tap the SOS button on the dashboard, confirm — the alert is created, and a mock notification is logged in the backend console (`server.js` terminal).
-5. Cancel it, or check **History** to see it logged.
 
 ### Admin access
 
@@ -71,19 +39,9 @@ Registration and login now require phone verification, like a real app:
 
 By default, SOS notifications are just logged to the backend console (mock mode) — nothing is sent. To send real alerts:
 
-**Email (Gmail — free):**
+**Email (Gmail)**
 1. Turn on 2-Step Verification on the Gmail account you'll send from.
 2. Create an App Password at https://myaccount.google.com/apppasswords
-3. In `server/.env`, set `EMAIL_USER` (your Gmail address) and `EMAIL_APP_PASSWORD` (the 16-character app password — not your normal password).
-4. Make sure each emergency contact has an `email` saved (the Contacts page now has an email field).
-
-**SMS (Twilio — free trial):**
-1. Sign up at https://www.twilio.com/try-twilio and grab a free trial phone number.
-2. In `server/.env`, set `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER`.
-3. **Trial accounts can only text verified numbers** — verify each recipient's number at https://console.twilio.com/us1/develop/phone-numbers/manage/verified, or upgrade the Twilio account to send to any number.
-4. Contact phone numbers are assumed to be Indian (+91) if no country code is given — see `server/services/notificationService.js` if you need a different default.
-
-Restart the backend (`npm run dev`) after editing `.env`. If either set of credentials is left blank, that channel silently falls back to the mock console log — the SOS flow itself never breaks.
 
 ## What's implemented
 
@@ -100,4 +58,6 @@ Restart the backend (`npm run dev`) after editing `.env`. If either set of crede
 ## Notes
 
 - This is an educational project. It does not bypass phone OS permissions, silently access the microphone/camera, or send real SMS — see the disclaimer in the original spec.
-- Never commit `server/.env` — it holds `JWT_SECRET`. `.gitignore` is already set up to exclude it and the SQLite `.db` file.
+
+  
+**Design and Build By Ayush**

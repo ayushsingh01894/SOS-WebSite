@@ -2,7 +2,11 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
 
-const DB_PATH = process.env.DATABASE_PATH || './database/silent_sos.db';
+const DB_PATH = process.env.DATABASE_PATH
+  ? (path.isAbsolute(process.env.DATABASE_PATH)
+      ? process.env.DATABASE_PATH
+      : path.resolve(__dirname, '..', process.env.DATABASE_PATH))
+  : path.resolve(__dirname, '../database/silent_sos.db');
 
 // Ensure the database directory exists
 const dbDir = path.dirname(DB_PATH);

@@ -3,6 +3,8 @@
 // channel falls back to a console "mock" log instead of crashing the app —
 // this keeps the SOS flow working even without provider setup.
 
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const nodemailer = require('nodemailer');
 const twilio = require('twilio');
 
@@ -111,13 +113,14 @@ async function sendEmail(contact, userName, text, html) {
   }
 
   try {
-    await mailer.sendMail({
-      from: process.env.EMAIL_USER,
+    const info = await mailer.sendMail({
+      from: `"Silent SOS" <${process.env.EMAIL_USER}>`,
       to: contact.email,
       subject: `🚨 Emergency SOS from ${userName}`,
       text,
       html
     });
+    console.log(`[EMAIL SENT] Alert sent to ${contact.email} (MessageId: ${info.messageId})`);
     return { channel: 'email', status: 'SENT', recipient: contact.email };
   } catch (err) {
     console.error(`Failed to send email to ${contact.email}:`, err.message);

@@ -29,7 +29,9 @@ async function createSOS(req, res, next) {
       accuracy,
       message,
       triggeredAt: new Date(alert.triggered_at || Date.now())
-    }).catch((err) => console.error('Notification delivery error (SOS):', err.message));
+    })
+      .then((results) => console.log('Notification delivery results (SOS):', JSON.stringify(results, null, 2)))
+      .catch((err) => console.error('Notification delivery error (SOS):', err.message));
 
     res.status(201).json({ success: true, alert, notified: contacts.length });
   } catch (err) {

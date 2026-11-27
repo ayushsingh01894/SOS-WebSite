@@ -1,5 +1,5 @@
 **Hey I am ayush singh**
-# 🚨 Silent SOS
+#  Silent SOS
 
 A full-stack emergency assistance web app: a discreet way to trigger an SOS, share your location, and notify emergency contacts.
 
